@@ -28,22 +28,28 @@ __is_indir_ps1() {
 }
 
 __is_indir_scan() {
-  local targetfile="$1"
-  local LCWD=$(pwd)
+  local targetfile
+  local LCWD
+  targetfile="$1"
+  LCWD=$(pwd)
 
-  [[ -n $DEBUG_indir ]] && echo "looking for this file >> $targetfile <<"
-  while [[ $LCWD == "/"* ]];                                                            # loop as long as path is more than a /
-  do
-        [[ -n $DEBUG_indir ]] && echo "looking in >> $LCWD"
-	   	if [[ -e ${LCWD}/${targetfile} ]]                                               # check if targetfile exists in working directory
-                then
-			[[ -n $DEBUG_indir ]] && echo "FOUND IT >>>$LCWD Contains $targetfile<<<"
-                        #export ISINDIR=$(cat $LCWD/$INDIR)
-                        echo $(cat "${LCWD}/${targetfile}")                             # echo contents of targetfile
-                        break 2                                                         # all done. break both wile loops
-                fi
+  if [[ -n $targetfile ]]
+  then
 
-        LCWD=${LCWD%/*}                                                                 # did not find targetfile in CWD remove last dir from CWD and try again
-  done
+      [[ -n $DEBUG_indir ]] && echo "looking for this file >> $targetfile <<"
+      while [[ $LCWD == "/"* ]];                                                            # loop as long as path is more than a /
+      do
+            [[ -n $DEBUG_indir ]] && echo "looking in >> $LCWD"
+            if [[ -e ${LCWD}/${targetfile} ]]                                               # check if targetfile exists in working directory
+                    then
+                [[ -n $DEBUG_indir ]] && echo "FOUND IT >>>$LCWD<<< Contains >>>$targetfile<<<"
+                            #export ISINDIR=$(cat $LCWD/$INDIR)
+                            cat "${LCWD}/${targetfile}"                             # echo contents of targetfile
+                            break 2                                                         # all done. break both wile loops
+                    fi
+
+            LCWD=${LCWD%/*}                                                                 # did not find targetfile in CWD remove last dir from CWD and try again
+      done
+  fi
   return
 }
